@@ -96,6 +96,8 @@ BodyParser.prototype.parse = function(req, res, next) {
     var contentType = req.contentType,
         parser;
 
+    console.log(contentType);
+
     if (contentType === "application/json") {
         parser = jsonParser;
     } else if (contentType === "application/x-www-form-urlencoded") {
@@ -113,7 +115,7 @@ BodyParser.prototype.parse = function(req, res, next) {
         parser(req, next);
         return;
     }
-    if (rejectUnknown) {
+    if (this.rejectUnknown) {
         next(new HttpError(415));
         return;
     }
@@ -180,6 +182,15 @@ function urlEncodedParser(req, next) {
     mixin(req.body, params);
 
     next();
+}
+
+function mixin(a, b) {
+    var key, value;
+
+    for (key in b) {
+        if (a[key] == null && (value = b[key]) != null) a[key] = value;
+    }
+    return a;
 }
 
 var queryStringParse_regexp = /\+/g,
