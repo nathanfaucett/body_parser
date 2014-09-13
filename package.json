@@ -1,0 +1,24 @@
+{
+  "name": "body_parser",
+  "version": "0.0.1",
+  "description": "request body parser middleware",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nathanfaucett/body_parser.git"
+  },
+  "main": "src/index.js",
+  "keywords": [
+    "body_parser",
+    "body_parser.js"
+  ],
+  "author": "Nathan Faucett",
+  "license": "BSD-2-Clause",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "grunt": "",
+    "grunt-jsbeautifier": ""
+  },
+  "dependencies": {
+    "http_error": "git://github.com/nathanfaucett/http_error"
+  }
+}
