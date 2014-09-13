@@ -19,6 +19,7 @@
     "grunt-jsbeautifier": ""
   },
   "dependencies": {
-    "http_error": "git://github.com/nathanfaucett/http_error"
+    "http_error": "git://github.com/nathanfaucett/http_error",
+    "qs": "git://github.com/nathanfaucett/qs"
   }
 }

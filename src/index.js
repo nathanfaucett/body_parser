@@ -1,4 +1,5 @@
-var HttpError = require("http_error");
+var HttpError = require("http_error"),
+    qs = require("qs");
 
 
 function BodyParser(opts) {
@@ -153,7 +154,7 @@ function multipartParser(req, next) {
         params;
 
     try {
-        params = queryStringParse(body);
+        params = qs.parse(body);
     } catch (e) {
         next(new HttpError(415, "Invalid Form: " + e.message));
         return;
@@ -173,7 +174,7 @@ function urlEncodedParser(req, next) {
         params;
 
     try {
-        params = queryStringParse(body);
+        params = qs.parse(body);
     } catch (e) {
         next(new HttpError(415, "Invalid URL: " + e.message));
         return;
@@ -191,65 +192,6 @@ function mixin(a, b) {
         if (a[key] == null && (value = b[key]) != null) a[key] = value;
     }
     return a;
-}
-
-var queryStringParse_regexp = /\+/g,
-    hasOwnProperty = Object.prototype.hasOwnProperty
-
-function queryStringParse(qs, sep, eq, options) {
-    var obj = {},
-        has = hasOwnProperty,
-        regexp = queryStringParse_regexp,
-        maxKeys = 1000,
-        decode = decodeURIComponent,
-        maxKeys, len, i, x, idx, kstr, vstr, k, v, tmp;
-
-    sep = sep || "&";
-    eq = eq || "=";
-
-    if (typeof(qs) !== "string" || qs.length === 0) return obj;
-    qs = qs.split(sep);
-
-    maxKeys = 1000;
-    if (options && (options.maxKeys === +options.maxKeys)) {
-        maxKeys = options.maxKeys;
-    }
-
-    len = qs.length;
-    if (maxKeys > 0 && len > maxKeys) len = maxKeys;
-
-    if (options && typeof(options.decodeURIComponent) === "function") decode = options.decodeURIComponent;
-
-    for (i = 0; i < len; i++) {
-        x = qs[i].replace(regexp, "%20");
-        idx = x.indexOf(eq);
-
-        if (idx >= 0) {
-            kstr = x.substr(0, idx);
-            vstr = x.substr(idx + 1);
-        } else {
-            kstr = x;
-            vstr = '';
-        }
-
-        try {
-            k = decode(kstr);
-            v = decode(vstr);
-            if ((tmp = +v)) v = tmp;
-        } catch (e) {
-            continue;
-        }
-
-        if (!has.call(obj, k)) {
-            obj[k] = v;
-        } else if (Array.isArray(obj[k])) {
-            obj[k].push(v);
-        } else {
-            obj[k] = [obj[k], v];
-        }
-    }
-
-    return obj;
 }
 
 module.exports = BodyParser;
