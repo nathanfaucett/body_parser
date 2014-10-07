@@ -97,8 +97,6 @@ BodyParser.prototype.parse = function(req, res, next) {
     var contentType = req.contentType,
         parser;
 
-    console.log(contentType);
-
     if (contentType === "application/json") {
         parser = jsonParser;
     } else if (contentType === "application/x-www-form-urlencoded") {
