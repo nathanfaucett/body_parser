@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "http_error": "git://github.com/nathanfaucett/http_error",
+    "multiparty": "^4.0.0",
     "qs": "git://github.com/nathanfaucett/qs"
   }
 }

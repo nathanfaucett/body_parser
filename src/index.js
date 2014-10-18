@@ -1,4 +1,5 @@
 var HttpError = require("http_error"),
+    multiparty = require('multiparty'),
     qs = require("qs");
 
 
@@ -44,10 +45,29 @@ BodyParser.prototype.middleware = function(req, res, next) {
         return;
     }
 
+    if (
+        contentType === "multipart/form-data" ||
+        contentType === "text/tsv" ||
+        contentType === "text/tab-separated-values" ||
+        contentType === "text/csv"
+    ) {
+        new multiparty.Form().parse(req, function(err, fields, files) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            req.files = files;
+            mixin(req.body, params);
+
+            next();
+        });
+        return;
+    }
+
     if (!contentType ||
         contentType === "application/json" ||
         contentType === "application/x-www-form-urlencoded" ||
-        contentType === "multipart/form-data" ||
         contentType.substr(0, 5) === "text/"
     ) {
         req.rawBody = "";
@@ -101,19 +121,13 @@ BodyParser.prototype.parse = function(req, res, next) {
         parser = jsonParser;
     } else if (contentType === "application/x-www-form-urlencoded") {
         parser = urlEncodedParser;
-    } else if (
-        contentType === "multipart/form-data" ||
-        contentType === "text/tsv" ||
-        contentType === "text/tab-separated-values" ||
-        contentType === "text/csv"
-    ) {
-        parser = multipartParser;
     }
 
     if (parser) {
         parser(req, next);
         return;
     }
+
     if (this.rejectUnknown) {
         next(new HttpError(415));
         return;
@@ -124,12 +138,14 @@ BodyParser.prototype.parse = function(req, res, next) {
 
 
 function jsonParser(req, next) {
+    var body, params;
+
     if (!req.rawBody) {
         next();
         return;
     }
-    var body = req.rawBody,
-        params;
+
+    body = req.rawBody;
 
     try {
         params = JSON.parse(body);
@@ -143,33 +159,15 @@ function jsonParser(req, next) {
     next();
 }
 
-function multipartParser(req, next) {
-    if (!req.rawBody) {
-        next();
-        return;
-    }
-    var body = req.rawBody,
-        params;
-
-    try {
-        params = qs.parse(body);
-    } catch (e) {
-        next(new HttpError(415, "Invalid Form: " + e.message));
-        return;
-    }
-
-    mixin(req.body, params);
-
-    next();
-}
-
 function urlEncodedParser(req, next) {
+    var body, params;
+
     if (!req.rawBody) {
         next();
         return;
     }
-    var body = req.rawBody,
-        params;
+
+    body = req.rawBody;
 
     try {
         params = qs.parse(body);
@@ -191,5 +189,6 @@ function mixin(a, b) {
     }
     return a;
 }
+
 
 module.exports = BodyParser;
