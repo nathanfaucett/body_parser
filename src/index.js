@@ -3,15 +3,16 @@ var HttpError = require("http_error"),
     qs = require("qs");
 
 
-function BodyParser(opts) {
-    opts || (opts = {});
+function BodyParser(options) {
+    options || (options = {});
 
-    this.rejectUnknown = opts.rejectUnknown ? !!opts.rejectUnknown : false;
-    this.limit = typeof(opts.limit) === "number" ? opts.limit : false;
+    this.rejectUnknown = options.rejectUnknown ? !!options.rejectUnknown : false;
+    this.limit = typeof(options.limit) === "number" ? options.limit : false;
+    this.multipartOptions = options.multipart || {};
 }
 
-BodyParser.express = function(opts) {
-    var bodyParser = new BodyParser(opts);
+BodyParser.express = function(options) {
+    var bodyParser = new BodyParser(options);
 
     return function(req, res, next) {
 
@@ -51,14 +52,14 @@ BodyParser.prototype.middleware = function(req, res, next) {
         contentType === "text/tab-separated-values" ||
         contentType === "text/csv"
     ) {
-        new multiparty.Form().parse(req, function(err, fields, files) {
+        new multiparty.Form(this.multipartOptions).parse(req, function(err, fields, files) {
             if (err) {
                 next(err);
                 return;
             }
 
-            req.files = files;
-            mixin(req.body, params);
+            req.files = typeof(req.files) === "object" ? mixin(req.files, files) : files;
+            mixin(req.body, fields);
 
             next();
         });
@@ -66,8 +67,8 @@ BodyParser.prototype.middleware = function(req, res, next) {
     }
 
     if (!contentType ||
-        contentType === "application/json" ||
         contentType === "application/x-www-form-urlencoded" ||
+        contentType === "application/json" ||
         contentType.substr(0, 5) === "text/"
     ) {
         req.rawBody = "";
