@@ -1,5 +1,5 @@
 {
-  "name": "body_parser",
+  "name": "@nathanfaucett/body_parser",
   "version": "0.0.1",
   "description": "request body parser middleware",
   "repository": {
@@ -15,13 +15,13 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.11.3",
-    "grunt-jsbeautifier": "^0.2.10"
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-jsbeautifier": "^0.2.13"
   },
   "dependencies": {
-    "http_error": "git://github.com/nathanfaucett/http_error.git",
+    "@nathanfaucett/http_error": "^0.0.1",
     "multiparty": "^4.0.0",
-    "qs": "git://github.com/nathanfaucett/qs.git"
+    "@nathanfaucett/qs": "^0.0.1"
   }
 }

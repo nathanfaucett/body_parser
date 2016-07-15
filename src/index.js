@@ -1,6 +1,6 @@
-var HttpError = require("http_error"),
-    multiparty = require('multiparty'),
-    qs = require("qs");
+var multiparty = require("multiparty"),
+    HttpError = require("@nathanfaucett/http_error"),
+    qs = require("@nathanfaucett/qs");
 
 
 function BodyParser(options) {
@@ -15,7 +15,6 @@ BodyParser.express = function(options) {
     var bodyParser = new BodyParser(options);
 
     return function(req, res, next) {
-
         bodyParser.middleware(req, res, next);
     };
 };
@@ -75,7 +74,9 @@ BodyParser.prototype.middleware = function(req, res, next) {
         if (limit) {
             req.on("data", function(chunk) {
                 bytesReceived += Buffer.byteLength(chunk);
-                if (bytesReceived > limit) return;
+                if (bytesReceived > limit) {
+                    return;
+                }
 
                 req.rawBody += chunk.toString(req.charset);
             });
@@ -89,7 +90,9 @@ BodyParser.prototype.middleware = function(req, res, next) {
         if (limit) {
             req.on("data", function(chunk) {
                 bytesReceived += chunk.length;
-                if (bytesReceived > limit) return;
+                if (bytesReceived > limit) {
+                    return;
+                }
 
                 req.rawBody = Buffer.concat([req.rawBody, chunk]);
             });
@@ -186,7 +189,9 @@ function mixin(a, b) {
     var key, value;
 
     for (key in b) {
-        if (a[key] == null && (value = b[key]) != null) a[key] = value;
+        if (a[key] == null && (value = b[key]) != null) {
+            a[key] = value;
+        }
     }
     return a;
 }
