@@ -1,6 +1,6 @@
 {
   "name": "@nathanfaucett/body_parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "request body parser middleware",
   "repository": {
     "type": "git",
@@ -20,8 +20,8 @@
     "grunt-jsbeautifier": "^0.2.13"
   },
   "dependencies": {
-    "@nathanfaucett/http_error": "^0.0.1",
+    "@nathanfaucett/http_error": "^0.0.2",
     "multiparty": "^4.0.0",
-    "@nathanfaucett/qs": "^0.0.1"
+    "@nathanfaucett/qs": "^0.0.2"
   }
 }
